@@ -1,7 +1,7 @@
 package envoygo
 
 import (
-	"net/http"
+	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
 )
 
 type Context interface {
@@ -9,32 +9,42 @@ type Context interface {
 
 	Log(lvl LogLevel, msg string)
 
-	Request() *http.Request
+	Request() Request
+
+	SetRequest()
 
 	Response() Response
 
-	String(code int, s string, opts ...ReplyOption) error
+	SetResponse()
 
-	JSON(code int, i interface{}, opts ...ReplyOption) error
+	StreamInfo() api.StreamInfo
 
-	NoContent(code int, opts ...ReplyOption) error
+	String(code int, s string, opts ...ContextOption) error
+
+	JSON(code int, i interface{}, opts ...ContextOption) error
+
+	NoContent(code int, opts ...ContextOption) error
+
+	StatusType() api.StatusType
+
+	Committed() bool
 }
 
-type ReplyOption func(o *ReplyOptions)
+type ContextOption func(o *ContextOptions)
 
-type ReplyOptions struct {
+type ContextOptions struct {
 	ResponseCodeDetail string
 	GrpcStatusCode     int64
 }
 
-func WithReplyResponseCodeDetails(s string) ReplyOption {
-	return func(o *ReplyOptions) {
+func WithReplyResponseCodeDetails(s string) ContextOption {
+	return func(o *ContextOptions) {
 		o.ResponseCodeDetail = s
 	}
 }
 
-func WithReplyRpcStatusCode(code int64) ReplyOption {
-	return func(o *ReplyOptions) {
+func WithReplyRpcStatusCode(code int64) ContextOption {
+	return func(o *ContextOptions) {
 		o.GrpcStatusCode = code
 	}
 }
