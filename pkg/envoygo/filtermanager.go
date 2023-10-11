@@ -27,7 +27,11 @@ func newFilter(callback api.FilterCallbackHandler, config interface{}, p Plugin)
 }
 
 func (f *filter) DecodeHeaders(header api.RequestHeaderMap, endStream bool) api.StatusType {
-	return api.Continue
+	return f.p.handleRequestHeaderStep(header)
+}
+
+func (f *filter) EncodeHeaders(header api.ResponseHeaderMap, endStream bool) api.StatusType {
+	return f.p.handleResponseHeaderStep(header)
 }
 
 func (f *filter) DecodeData(buffer api.BufferInstance, endStream bool) api.StatusType {
@@ -35,10 +39,6 @@ func (f *filter) DecodeData(buffer api.BufferInstance, endStream bool) api.Statu
 }
 
 func (f *filter) EncodeData(buffer api.BufferInstance, endStream bool) api.StatusType {
-	return api.Continue
-}
-
-func (f *filter) EncodeHeaders(header api.ResponseHeaderMap, endStream bool) api.StatusType {
 	return api.Continue
 }
 

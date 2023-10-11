@@ -5,13 +5,30 @@ import (
 	"github.com/envoyproxy/envoy/contrib/golang/filters/http/source/go/pkg/http"
 )
 
+func filterFactoryConstructor(p Plugin) api.StreamFilterConfigFactory {
+	return func(config interface{}) api.StreamFilterFactory {
+		return func(callbacks api.FilterCallbackHandler) api.StreamFilter {
+			return &filter{
+				callback: callbacks,
+				config:   config,
+				p:        p,
+			}
+		}
+	}
+}
+
 type Plugin interface {
 	Use(handler Handler)
 
 	ErrorHandler() ErrorHandler
+
 	HandlerChain() HandlerFunc
 
 	Register()
+
+	handleRequestHeaderStep(header api.RequestHeaderMap) api.StatusType
+
+	handleResponseHeaderStep(header api.ResponseHeaderMap) api.StatusType
 }
 
 type plugin struct {
@@ -21,6 +38,8 @@ type plugin struct {
 
 	handlers     []Handler
 	handlerChain HandlerFunc
+
+	ctx Context
 }
 
 func New(name string, configParser ConfigParser) Plugin {
@@ -53,20 +72,16 @@ func (p *plugin) Register() {
 	p.handlerChain = func(c Context) error { return nil }
 
 	for i := len(p.handlers) - 1; i >= 0; i-- {
-		p.handlerChain = p.handlers[i](p.handlerChain)
+		p.handlerChain = HandlerDecorator(p.handlers[i](p.handlerChain))
 	}
 
 	http.RegisterHttpFilterConfigFactoryAndParser(p.name, filterFactoryConstructor(p), p.configParser)
 }
 
-func filterFactoryConstructor(p Plugin) api.StreamFilterConfigFactory {
-	return func(config interface{}) api.StreamFilterFactory {
-		return func(callbacks api.FilterCallbackHandler) api.StreamFilter {
-			return &filter{
-				callback: callbacks,
-				config:   config,
-				p:        p,
-			}
-		}
-	}
+func (p *plugin) handleRequestHeaderStep(header api.RequestHeaderMap) api.StatusType {
+	return api.Continue
+}
+
+func (p *plugin) handleResponseHeaderStep(header api.ResponseHeaderMap) api.StatusType {
+	return api.Continue
 }

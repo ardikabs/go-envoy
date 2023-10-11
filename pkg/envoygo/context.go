@@ -48,3 +48,8 @@ func WithReplyRpcStatusCode(code int64) ContextOption {
 		o.GrpcStatusCode = code
 	}
 }
+
+type context struct {
+	httpRequest  Request
+	httpResponse Response
+}

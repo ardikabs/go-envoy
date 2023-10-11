@@ -51,7 +51,7 @@ func responseEnforcer() Handler {
 			end := time.Since(start)
 			c.Log(InfoLevel, fmt.Sprintf("execution requires: %s", end))
 
-			switch sc := c.Response().Status(); sc {
+			switch sc := c.Response().Http().StatusCode; sc {
 			case http.StatusUnauthorized:
 				return c.JSON(sc, nil, WithReplyResponseCodeDetails("unauthorized access"))
 			}
