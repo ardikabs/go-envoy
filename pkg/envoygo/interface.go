@@ -8,7 +8,7 @@ import (
 )
 
 type Request interface {
-	HeaderWriter() HeaderWriter
+	Header() HeaderWriter
 
 	Http() *http.Request
 
@@ -39,7 +39,7 @@ func NewHttpRequest(header api.RequestHeaderMap) Request {
 	return r
 }
 
-func (r *request) HeaderWriter() HeaderWriter {
+func (r *request) Header() HeaderWriter {
 	return r.headerWriter
 }
 
@@ -52,7 +52,7 @@ func (r *request) Buffer() api.BufferInstance {
 }
 
 type Response interface {
-	HeaderWriter() HeaderWriter
+	Header() HeaderWriter
 
 	Http() *http.Response
 
@@ -86,7 +86,7 @@ func NewHttpResponse(header api.ResponseHeaderMap) Response {
 	return r
 }
 
-func (r *response) HeaderWriter() HeaderWriter {
+func (r *response) Header() HeaderWriter {
 	return r.headerWriter
 }
 

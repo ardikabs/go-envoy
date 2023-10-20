@@ -35,7 +35,7 @@ func requestHeaderModifier(headers map[string]string) Handler {
 			// and immediately return back to the envoy
 
 			for k, v := range headers {
-				c.Request().HeaderWriter().Set(k, v)
+				c.Request().Header().Set(k, v)
 			}
 
 			return next(c)

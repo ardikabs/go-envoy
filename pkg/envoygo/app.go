@@ -26,9 +26,9 @@ type Plugin interface {
 
 	Register()
 
-	handleRequestHeaderStep(header api.RequestHeaderMap) api.StatusType
+	// handleRequestHeaderStep(header api.RequestHeaderMap) api.StatusType
 
-	handleResponseHeaderStep(header api.ResponseHeaderMap) api.StatusType
+	// handleResponseHeaderStep(header api.ResponseHeaderMap) api.StatusType
 }
 
 type plugin struct {
