@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHaderAsMap(t *testing.T) {
+func TestHeaderMapAsMap(t *testing.T) {
 	reqHeaderMap := mock_envoy.NewRequestHeaderMap(t)
 	reqHeaderMap.EXPECT().Range(mock.Anything).Return().Run(func(f func(string, string) bool) {
 		headers := map[string][]string{
